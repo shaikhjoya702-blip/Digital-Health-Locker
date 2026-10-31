@@ -1,0 +1,66 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1788 >>
+stream
+BT
+/F1 11 Tf
+50 740 Td
+16 TL
+(CITY DIAGNOSTIC LABORATORIES) Tj
+T* (Clinical Pathology & Hematology Report) Tj
+T* (======================================================================) Tj
+T* (Patient Name: Alex Morgan            Age / Gender: 38 / Female) Tj
+T* (Date of Collection: 10-Jun-2026      Sample ID: CBC-2026-9812) Tj
+T* (Referring Physician: Dr. E. Morgan    Status: Final / Verified) Tj
+T* (======================================================================) Tj
+T* () Tj
+T* (COMPLETE BLOOD COUNT \(CBC\) WITH AUTOMATED DIFFERENTIAL) Tj
+T* () Tj
+T* (TEST PARAMETER             RESULT     REFERENCE RANGE    UNITS) Tj
+T* (----------------------------------------------------------------------) Tj
+T* (White Blood Cell \(WBC\)     6.8        4.5 - 11.0         x10^3/uL) Tj
+T* (Red Blood Cell \(RBC\)       4.42       4.00 - 5.20        x10^6/uL) Tj
+T* (Hemoglobin                 13.8       12.0 - 16.0        g/dL) Tj
+T* (Hematocrit                 41.2       37.0 - 47.0        %) Tj
+T* (Platelet Count             245        150 - 450          x10^3/uL) Tj
+T* (Mean Corpuscular Vol \(MCV\) 89.0       80.0 - 100.0       fL) Tj
+T* (Mean Corpuscular Hb \(MCH\)  31.2       27.0 - 33.0        pg) Tj
+T* (Fasting Blood Glucose      92         70 - 99            mg/dL) Tj
+T* (----------------------------------------------------------------------) Tj
+T* () Tj
+T* (CLINICAL INTERPRETATION & NOTES:) Tj
+T* (- All primary hematological indices are within standard adult biological limits.) Tj
+T* (- No evidence of microcytic/macrocytic anemia or thrombocytopenia.) Tj
+T* (- Fasting glycemic levels reflect optimal glucose homeostasis.) Tj
+T* () Tj
+T* (Electronically verified by: Dr. K. Sharma, MD \(Pathology\)) Tj
+T* (License No: MED-PAT-90812 | City Diagnostic Labs) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000002086 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2156
+%%EOF

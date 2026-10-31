@@ -1,0 +1,14 @@
+# Backend-specific ignore
+.env
+*.env
+!.env.example
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+storage/records/*
+!storage/records/.gitkeep
+!storage/records/sample_cbc_panel.pdf
+*.log

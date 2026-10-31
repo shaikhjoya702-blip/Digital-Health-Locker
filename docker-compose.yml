@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dhl_backend
+    restart: unless-stopped
+    environment:
+      # Paste your Neon Tech connection string in backend/.env or directly here:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://neondb_owner:password@ep-xyz.neon.tech/neondb?sslmode=require}
+      - SECRET_KEY=${SECRET_KEY:-prod-secret-key-32-chars-long-here}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-prod-jwt-secret-key-32-chars-long}
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+      - FRONTEND_URL=http://localhost:5173
+      - STORAGE_DIR=/app/storage/records
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_storage:/app/storage/records
+
+volumes:
+  backend_storage:
