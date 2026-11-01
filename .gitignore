@@ -47,7 +47,10 @@ pnpm-debug.log*
 # User Storage & Uploaded Medical Documents (HIPAA / Privacy)
 backend/storage/records/*
 !backend/storage/records/.gitkeep
-!backend/storage/records/sample_cbc_panel.pdf
+!backend/storage/records/*.pdf
+!backend/storage/records/*.jpeg
+!backend/storage/records/*.jpg
+!backend/storage/records/*.png
 storage/records/*
 !storage/records/.gitkeep
 

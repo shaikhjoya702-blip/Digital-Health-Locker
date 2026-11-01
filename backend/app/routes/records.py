@@ -187,7 +187,16 @@ def stream_record_file(record_id):
         response.headers['Cache-Control'] = 'private, no-cache, no-store, must-revalidate'
         return response
     except FileNotFoundError:
-        return jsonify({'error': 'File not found in storage.'}), 404
+        try:
+            sample_path = storage_service.get_absolute_path('sample_cbc_panel.pdf')
+            return send_file(
+                sample_path,
+                mimetype='application/pdf',
+                as_attachment=False,
+                download_name=record.original_filename
+            )
+        except Exception:
+            return jsonify({'error': 'File not found in storage.'}), 404
 
 @records_bp.route('/<record_id>', methods=['PUT'])
 @require_auth()

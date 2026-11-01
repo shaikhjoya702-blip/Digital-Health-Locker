@@ -97,7 +97,7 @@ class SharingService:
             'token': raw_token,
             'otp': raw_otp,
             'sharing_url': opaque_sharing_url,
-            'expires_at': expires_at.isoformat(),
+            'expires_at': f"{expires_at.isoformat()}Z" if not expires_at.isoformat().endswith('Z') else expires_at.isoformat(),
             'records_shared_count': len(valid_ids),
             'allow_download': allow_download,
             'include_ai_summary': include_ai_summary
@@ -135,7 +135,7 @@ class SharingService:
             'valid': True,
             'permission_id': permission.id,
             'recipient_label': permission.recipient_label,
-            'expires_at': permission.expires_at.isoformat(),
+            'expires_at': f"{permission.expires_at.isoformat()}Z" if not permission.expires_at.isoformat().endswith('Z') else permission.expires_at.isoformat(),
             'requires_otp': True,
             'record_count': len(permission.allowed_record_ids or [])
         }
@@ -191,7 +191,7 @@ class SharingService:
             'success': True,
             'doctor_token': doctor_jwt,
             'expires_in_seconds': token_lifetime,
-            'expires_at': permission.expires_at.isoformat(),
+            'expires_at': f"{permission.expires_at.isoformat()}Z" if not permission.expires_at.isoformat().endswith('Z') else permission.expires_at.isoformat(),
             'allow_download': permission.allow_download,
             'include_ai_summary': permission.include_ai_summary
         }

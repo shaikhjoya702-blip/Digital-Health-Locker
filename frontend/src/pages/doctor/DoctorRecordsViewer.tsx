@@ -95,7 +95,13 @@ export const DoctorRecordsViewer: React.FC = () => {
     if (!data?.expires_at) return;
 
     const timer = setInterval(() => {
-      const diff = new Date(data.expires_at).getTime() - new Date().getTime();
+      // Ensure date string is parsed as UTC regardless of user device timezone
+      const dateStr = data.expires_at;
+      const targetTime = dateStr.endsWith('Z') || dateStr.includes('+')
+        ? new Date(dateStr).getTime()
+        : new Date(dateStr + 'Z').getTime();
+
+      const diff = targetTime - Date.now();
       if (diff <= 0) {
         setTimeLeft('Expired');
         clearInterval(timer);

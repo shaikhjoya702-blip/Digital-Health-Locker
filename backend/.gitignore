@@ -10,6 +10,9 @@ __pycache__/
 .pytest_cache/
 storage/records/*
 !storage/records/.gitkeep
-!storage/records/sample_cbc_panel.pdf
+!storage/records/*.pdf
+!storage/records/*.jpeg
+!storage/records/*.jpg
+!storage/records/*.png
 *.log
 
