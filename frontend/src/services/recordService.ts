@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, API_BASE_URL } from './api';
 import { MedicalRecord } from '../types';
 
 export const recordService = {
@@ -38,6 +38,6 @@ export const recordService = {
 
   getFileUrl(recordId: string) {
     const token = localStorage.getItem('dhl_auth_token');
-    return `/api/records/${recordId}/file?auth=${token || ''}`;
+    return `${API_BASE_URL}/records/${recordId}/file?auth=${token || ''}`;
   },
 };

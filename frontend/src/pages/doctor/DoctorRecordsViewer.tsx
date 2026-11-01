@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sharingService } from '../../services/sharingService';
+import { API_BASE_URL } from '../../services/api';
 import { MedicalRecord } from '../../types';
 import { Button } from '../../components/common/Button';
 import { Badge } from '../../components/common/Badge';
@@ -138,7 +139,7 @@ export const DoctorRecordsViewer: React.FC = () => {
   }
 
   const fileStreamUrl = selectedRecord
-    ? `/api/public/share/records/${selectedRecord.id}/view?token=${encodeURIComponent(doctorToken || '')}`
+    ? `${API_BASE_URL}/public/share/records/${selectedRecord.id}/view?token=${encodeURIComponent(doctorToken || '')}`
     : '';
 
   return (
