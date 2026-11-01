@@ -188,13 +188,22 @@ def stream_record_file(record_id):
         return response
     except FileNotFoundError:
         try:
-            sample_path = storage_service.get_absolute_path('sample_cbc_panel.pdf')
-            return send_file(
-                sample_path,
-                mimetype='application/pdf',
-                as_attachment=False,
-                download_name=record.original_filename
-            )
+            if record.mime_type.startswith('image/'):
+                sample_img = storage_service.get_absolute_path('adc4a2e02fdf478195e9b040b54f92b8.jpeg')
+                return send_file(
+                    sample_img,
+                    mimetype='image/jpeg',
+                    as_attachment=False,
+                    download_name=record.original_filename
+                )
+            else:
+                sample_path = storage_service.get_absolute_path('sample_cbc_panel.pdf')
+                return send_file(
+                    sample_path,
+                    mimetype='application/pdf',
+                    as_attachment=False,
+                    download_name=record.original_filename
+                )
         except Exception:
             return jsonify({'error': 'File not found in storage.'}), 404
 
