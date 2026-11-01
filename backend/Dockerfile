@@ -19,4 +19,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["python", "run.py"]
+CMD ["sh", "-c", "gunicorn run:app --bind 0.0.0.0:${PORT:-5000}"]

@@ -39,6 +39,13 @@ class Config:
     if _raw_db_url.startswith('postgres://'):
         _raw_db_url = _raw_db_url.replace('postgres://', 'postgresql://', 1)
 
+    # In SQLAlchemy 2.1+, postgresql:// defaults to psycopg (v3). Fall back to psycopg2 if psycopg 3 is unavailable
+    if _raw_db_url.startswith('postgresql://') and not _raw_db_url.startswith('postgresql+'):
+        try:
+            import psycopg  # noqa: F401
+        except ImportError:
+            _raw_db_url = _raw_db_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
+
     # Ensure Neon serverless connections enforce SSL
     if 'neon.tech' in _raw_db_url and 'sslmode=' not in _raw_db_url:
         delimiter = '&' if '?' in _raw_db_url else '?'

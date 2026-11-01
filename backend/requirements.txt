@@ -3,6 +3,7 @@ flask-cors==4.0.1
 flask-sqlalchemy==3.1.1
 flask-migrate==4.0.7
 psycopg2-binary==2.9.13
+psycopg[binary]>=3.1.18
 pymysql==1.1.1
 cryptography==42.0.8
 pyjwt==2.8.0
