@@ -12,3 +12,4 @@ storage/records/*
 !storage/records/.gitkeep
 !storage/records/sample_cbc_panel.pdf
 *.log
+
