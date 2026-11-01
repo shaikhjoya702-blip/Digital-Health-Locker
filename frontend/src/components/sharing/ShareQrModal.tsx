@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { CreatedShareResult } from '../../types';
 import { QRCodeSVG } from 'qrcode.react';
-import { Copy, Check, Clock, ShieldCheck, KeyRound } from 'lucide-react';
+import { Copy, Check, Clock, KeyRound, ExternalLink } from 'lucide-react';
 import { useNotification } from '../../contexts/NotificationContext';
 
 interface ShareQrModalProps {
@@ -18,20 +18,82 @@ export const ShareQrModal: React.FC<ShareQrModalProps> = ({
   shareResult,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [otpCopied, setOtpCopied] = useState(false);
   const { showToast } = useNotification();
+
+  // Compute the live browser URL for the doctor portal so it always matches the current host
+  const effectiveUrl = useMemo(() => {
+    if (!shareResult) return '';
+    if (shareResult.token && typeof window !== 'undefined') {
+      return `${window.location.origin}/doctor/portal?token=${shareResult.token}`;
+    }
+    if (
+      shareResult.sharing_url &&
+      typeof window !== 'undefined' &&
+      !window.location.hostname.includes('localhost') &&
+      shareResult.sharing_url.includes('localhost')
+    ) {
+      try {
+        const parsed = new URL(shareResult.sharing_url);
+        return `${window.location.origin}${parsed.pathname}${parsed.search}`;
+      } catch {
+        return shareResult.sharing_url;
+      }
+    }
+    return shareResult.sharing_url;
+  }, [shareResult]);
 
   if (!shareResult) return null;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareResult.sharing_url);
-    setCopied(true);
-    showToast('info', 'Link Copied', 'Secure sharing URL copied to clipboard.');
-    setTimeout(() => setCopied(false), 2500);
+  // Robust clipboard copy with fallback for all browser security contexts
+  const copyText = async (text: string): Promise<boolean> => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+      // Fall through to fallback
+    }
+
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return success;
+    } catch {
+      return false;
+    }
   };
 
-  const handleCopyOtp = () => {
-    navigator.clipboard.writeText(shareResult.otp);
-    showToast('info', 'OTP Copied', '6-digit verification code copied.');
+  const handleCopyLink = async () => {
+    const success = await copyText(effectiveUrl);
+    if (success) {
+      setCopied(true);
+      showToast('info', 'Link Copied', 'Doctor portal sharing URL copied to clipboard.');
+      setTimeout(() => setCopied(false), 2500);
+    } else {
+      showToast('warning', 'Notice', 'Could not access clipboard automatically. Please copy the link below manually.');
+    }
+  };
+
+  const handleCopyOtp = async () => {
+    const success = await copyText(shareResult.otp);
+    if (success) {
+      setOtpCopied(true);
+      showToast('info', 'OTP Copied', '6-digit verification code copied.');
+      setTimeout(() => setOtpCopied(false), 2500);
+    } else {
+      showToast('warning', 'Notice', 'Please copy the OTP code manually.');
+    }
   };
 
   return (
@@ -40,7 +102,7 @@ export const ShareQrModal: React.FC<ShareQrModalProps> = ({
         {/* QR Code Container */}
         <div className="inline-block p-4 bg-white border-2 border-slate-200 rounded-2xl shadow-sm mx-auto">
           <QRCodeSVG
-            value={shareResult.sharing_url}
+            value={effectiveUrl}
             size={180}
             level="H"
             includeMargin={true}
@@ -60,14 +122,35 @@ export const ShareQrModal: React.FC<ShareQrModalProps> = ({
             <button
               onClick={handleCopyOtp}
               title="Copy OTP"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors"
+              type="button"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors"
             >
-              <Copy className="w-4 h-4" />
+              {otpCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
           <p className="text-[11px] text-slate-400 mt-1">
             Required if doctor access policy enforces 2-factor OTP.
           </p>
+        </div>
+
+        {/* Direct Link Preview & Copy */}
+        <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center gap-2 text-left">
+          <input
+            type="text"
+            readOnly
+            value={effectiveUrl}
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+            className="flex-1 bg-transparent text-xs text-slate-600 font-mono truncate focus:outline-none select-all"
+            title="Click to select full URL"
+          />
+          <button
+            onClick={handleCopyLink}
+            type="button"
+            className="px-2.5 py-1 text-xs font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 flex items-center gap-1 shrink-0"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? 'Copied' : 'Copy'}
+          </button>
         </div>
 
         {/* Security & Expiry info */}
@@ -88,19 +171,31 @@ export const ShareQrModal: React.FC<ShareQrModalProps> = ({
           enter your 6-digit OTP to view the authorized reports.
         </p>
 
-        <div className="flex justify-end gap-3 pt-2">
-          <Button
-            variant="outline"
-            size="md"
-            icon={copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-            onClick={handleCopyLink}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <a
+            href={effectiveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-3 py-2 rounded-xl border border-teal-200 transition-colors"
           >
-            {copied ? 'Link Copied' : 'Copy Portal Link'}
-          </Button>
+            <ExternalLink className="w-3.5 h-3.5" />
+            Open Portal in New Tab
+          </a>
 
-          <Button variant="primary" size="md" onClick={onClose}>
-            Done
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="md"
+              icon={copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+              onClick={handleCopyLink}
+            >
+              {copied ? 'Link Copied' : 'Copy Portal Link'}
+            </Button>
+
+            <Button variant="primary" size="md" onClick={onClose}>
+              Done
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

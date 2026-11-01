@@ -1,7 +1,7 @@
 import secrets
 from datetime import datetime, timedelta
 from typing import Tuple, Dict, Any, List
-from flask import current_app
+from flask import current_app, request
 from app.extensions import db
 from app.models.sharing_permission import SharingPermission
 from app.models.sharing_access_event import SharingAccessEvent
@@ -71,7 +71,25 @@ class SharingService:
         db.session.add(permission)
         db.session.commit()
 
-        frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5173')
+        # Dynamically infer the frontend URL from Origin/Referer header so Vercel deployments generate live links
+        frontend_url = None
+        try:
+            if request:
+                req_origin = request.headers.get('Origin')
+                if req_origin:
+                    frontend_url = req_origin.rstrip('/')
+                else:
+                    req_referer = request.headers.get('Referer')
+                    if req_referer:
+                        from urllib.parse import urlparse
+                        parsed = urlparse(req_referer)
+                        frontend_url = f"{parsed.scheme}://{parsed.netloc}"
+        except Exception:
+            pass
+
+        if not frontend_url:
+            frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5173')
+
         opaque_sharing_url = f"{frontend_url}/doctor/portal?token={raw_token}"
 
         return {
